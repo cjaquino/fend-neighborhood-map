@@ -33,7 +33,7 @@ class LocationList extends Component {
       <div id='sidebar'>
         <h2>Locations</h2>
         <div id="search-container">
-          <select defaultValue='none' id="location-search" onChange={() => this.onChangeHandler()}>
+          <select defaultValue='' id="location-search" onChange={() => this.onChangeHandler()}>
             <option value=''>Area</option>
             <option value='midtown'>Midtown</option>
             <option value='downtown'>Downtown</option>
@@ -42,7 +42,7 @@ class LocationList extends Component {
         </div>
         <ul id="locations-list">
           {this.props.locations.map((location,idx) => (
-              <li key={idx}>{location.title}</li>
+              <li key={idx}>{location.venue.name}</li>
             ))}
         </ul>
         <div id="menu" onClick={() => this.toggleMenuHandler()}>

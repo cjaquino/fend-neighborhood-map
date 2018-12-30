@@ -69,7 +69,7 @@ code {
 
 #search-container {
   width: 100%;
-  height: 2rem;
+  /* height: 20px; */
   margin: 0;
   padding: 0;
   display: flex;
@@ -93,6 +93,7 @@ code {
   margin-top: 2rem;
   width: 100%;
   padding: 0;
+  overflow: scroll;
 }
 
 #locations-list li {
