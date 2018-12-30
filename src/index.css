@@ -108,6 +108,10 @@ code {
   background-color: #555;
 }
 
+#locations-list li:focus {
+  background-color: #555;
+}
+
 #info-window p {
   font-size: .7rem;
   margin: 0;

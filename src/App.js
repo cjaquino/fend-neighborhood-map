@@ -51,7 +51,10 @@ class App extends Component {
           filtered_locs: response.data.response.groups[0].items
         }, this.loadMap())
       })
-      .catch(err => {console.log("ERROR: " + err)})
+      .catch(err => {
+        console.log("ERROR: " + err);
+        alert("ERROR: There was a problem with the FourSquare request")
+      })
   }
 
   onZipSelect = (zipCode) => {
@@ -117,28 +120,11 @@ class App extends Component {
   }
 
   onListClick = (e) => {
-    // reset list item background colors
-    // let listItems = [].slice.call(document.getElementById('locations-list').childNodes);
-    // listItems.forEach((listItem) => {
-    //   listItem.style.backgroundColor = "#333"
-    // })
-    //
-    // // set list item background colors
-    // e.target.style.backgroundColor = "#55D";
-    //
-    // const defaultIcon = this.makeMarkerIcon('f00');
-    // const selectedIcon = this.makeMarkerIcon('00f');
-    //
-    // // reset marker colors
-    // this.state.markers.map((marker) => {
-    //   marker.setIcon(defaultIcon);
-    // })
-
     // Set selected marker color
     const marker = this.state.markers.find((marker) => {
       return marker.title === e.target.id
     })
-    // marker.setIcon(selectedIcon);
+
     window.google.maps.event.trigger(marker,'click');
   }
 
@@ -166,6 +152,8 @@ class App extends Component {
             <p>${location.venue.location.formattedAddress[0]}</p>
             <p>${location.venue.location.formattedAddress[1]}</p>
             <p>${location.venue.location.formattedAddress[2]}</p>
+            <hr>
+            <p>Information retrieved from FourSquare API<p>
         </div>`;
 
       const defaultIcon = this.makeMarkerIcon('f00');

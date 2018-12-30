@@ -29,10 +29,10 @@ class LocationList extends Component {
   render() {
     // console.log(this.props);
     return (
-      <div id='sidebar'>
+      <div id='sidebar' role='menu'>
         <h2>Locations</h2>
-        <div id="search-container">
-          <select defaultValue='' id="location-search" onChange={(e) => this.onChangeHandler(e)}>
+        <div id="search-container" role='search'>
+          <select tabIndex="1" defaultValue='' id="location-search" onChange={(e) => this.onChangeHandler(e)}>
             <option value=''>ZIP Codes</option>
             {this.props.zipCodes.map((zipCode, index) => (
               <option key={index} value={zipCode}>{zipCode}</option>
@@ -41,12 +41,12 @@ class LocationList extends Component {
         </div>
         <ul id="locations-list">
           {this.props.locations.map((location) => (
-              <li key={location.venue.name} id={location.venue.name} onClick={(e) => this.props.onListClick(e)}>{location.venue.name}</li>
+              <li tabIndex="2" key={location.venue.name} id={location.venue.name} onClick={(e) => this.props.onListClick(e)}>{location.venue.name}</li>
             ))}
         </ul>
-        <div id="menu" onClick={() => this.toggleMenuHandler()}>
+        <button tabIndex="3" id="menu" onClick={() => this.toggleMenuHandler()}>
           <div id="icon" className='close'></div>
-        </div>
+        </button>
       </div>
     )
   }
