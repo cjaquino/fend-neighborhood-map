@@ -3,8 +3,7 @@ import './App.css'
 
 class LocationList extends Component {
   state = {
-    opened: true,
-    selectedArea: ''
+    opened: true
   }
 
   toggleMenuHandler = () => {
