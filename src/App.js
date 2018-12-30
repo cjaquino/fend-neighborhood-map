@@ -70,6 +70,7 @@ class App extends Component {
     } else {
       this.showAllMarkers();
     }
+
     // console.log(this.state.filtered_locs[0].venue.name);
   }
 
@@ -115,6 +116,32 @@ class App extends Component {
     return markerImage;
   }
 
+  onListClick = (e) => {
+    // reset list item background colors
+    // let listItems = [].slice.call(document.getElementById('locations-list').childNodes);
+    // listItems.forEach((listItem) => {
+    //   listItem.style.backgroundColor = "#333"
+    // })
+    //
+    // // set list item background colors
+    // e.target.style.backgroundColor = "#55D";
+    //
+    // const defaultIcon = this.makeMarkerIcon('f00');
+    // const selectedIcon = this.makeMarkerIcon('00f');
+    //
+    // // reset marker colors
+    // this.state.markers.map((marker) => {
+    //   marker.setIcon(defaultIcon);
+    // })
+
+    // Set selected marker color
+    const marker = this.state.markers.find((marker) => {
+      return marker.title === e.target.id
+    })
+    // marker.setIcon(selectedIcon);
+    window.google.maps.event.trigger(marker,'click');
+  }
+
   initMap = () => {
     const map = new window.google.maps.Map(document.getElementById('map'), {
         center: {lat:33.716502, lng:-84.38},
@@ -126,7 +153,6 @@ class App extends Component {
     let zipCodes = [];
     let bounds = new window.google.maps.LatLngBounds();
     // console.log(this.state.locations);
-
 
     let infoWindow = new window.google.maps.InfoWindow();
 
@@ -155,10 +181,10 @@ class App extends Component {
 
       markers.push(marker);
 
-      let listItem = document.getElementById(location.venue.name);
-      let listItems = [].slice.call(document.getElementById('locations-list').childNodes)
+      marker.addListener('click', function() {
+        let listItem = document.getElementById(location.venue.name);
+        let listItems = [].slice.call(document.getElementById('locations-list').childNodes)
 
-      marker.addListener('click', function(app) {
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
 
@@ -175,24 +201,6 @@ class App extends Component {
         listItem.style.backgroundColor =  "#55D";
         this.setIcon(selectedIcon);
       });
-
-      listItem.addEventListener('click', function() {
-        infoWindow.setContent(infoWindowContent);
-        infoWindow.open(map, marker);
-
-        //reset marker colors
-        markers.map((marker) => {
-          marker.setIcon(defaultIcon);
-        })
-
-        //reset list items' color
-        listItems.forEach((li) => {
-          li.style.backgroundColor = "#333";
-        })
-
-        listItem.style.backgroundColor =  "#55D";
-        marker.setIcon(selectedIcon);
-      })
 
       zipCodes.push(location.venue.location.postalCode);
     })
@@ -217,7 +225,12 @@ class App extends Component {
     return (
       <main>
         <div id="map"></div>
-        <LocationList locations={this.state.filtered_locs} zipCodes={this.state.zipCodes} onZipSelect={this.onZipSelect} />
+        <LocationList
+          locations={this.state.filtered_locs}
+          zipCodes={this.state.zipCodes}
+          onZipSelect={this.onZipSelect}
+          onListClick={this.onListClick}
+        />
       </main>
     );
   }

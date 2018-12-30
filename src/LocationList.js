@@ -41,7 +41,7 @@ class LocationList extends Component {
         </div>
         <ul id="locations-list">
           {this.props.locations.map((location) => (
-              <li key={location.venue.name} id={location.venue.name}>{location.venue.name}</li>
+              <li key={location.venue.name} id={location.venue.name} onClick={(e) => this.props.onListClick(e)}>{location.venue.name}</li>
             ))}
         </ul>
         <div id="menu" onClick={() => this.toggleMenuHandler()}>
