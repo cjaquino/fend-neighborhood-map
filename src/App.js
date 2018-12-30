@@ -12,19 +12,13 @@ function loadScript(url) {
   index.parentNode.insertBefore(script, index);
 };
 
-// const locations = [
-//   {title: 'World of Coca-Cola', area:'downtown', lat:33.7629496, lng:-84.39266959999998}, //Downtown
-//   {title: 'Zoo Atlanta', area:'grant park', lat:33.734098, lng:-84.37226799999996}, //Grant Park
-//   {title: 'Georgia Aquarium', area:'downtown', lat:33.763382, lng:-84.3951098}, //Downtown
-//   {title: 'Piedmont Park', area:'midtown', lat:33.7850856, lng:-84.37380300000001}, //Midtown
-//   {title: 'High Museum of Art', area:'midtown', lat:33.7900632, lng:-84.38555199999996} //Midtown
-// ];
-
 class App extends Component {
   state = {
     locations: [],
     filtered_locs: [],
-    zipCodes: []
+    markers: [],
+    zipCodes: [],
+    map:undefined
   }
 
   componentDidMount() {
@@ -36,7 +30,9 @@ class App extends Component {
     loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyBnkgMnhHckV_jd9qEFlop5r_B8Ju7ENXE&callback=initMap");
   }
 
-  // this script was based off of the tutorial from https://www.youtube.com/watch?v=dAhMIF0fNpo
+  // this function was based off of the tutorial from https://www.youtube.com/watch?v=dAhMIF0fNpo
+  // using axios instead of fetch because it performs automatic trasforms to json data
+  // https://medium.com/@thejasonfile/fetch-vs-axios-js-for-making-http-requests-2b261cdd3af5
   getLocations = () => {
     const endpoint = "https://api.foursquare.com/v2/venues/explore?";
     const parameters = {
@@ -54,15 +50,16 @@ class App extends Component {
           filtered_locs: response.data.response.groups[0].items
         }, this.loadMap())
       })
-      .catch(error => {
-        console.log("ERROR: " + error)
-      })
+      .catch(err => {console.log("ERROR: " + err)})
   }
 
   onZipSelect = (zipCode) => {
+    // reset filtered_locs state before filtering
     this.setState({
       filtered_locs: this.state.locations
     })
+
+    // filter locations
     if(zipCode){
       let filtered_locs = this.state.locations.filter((location) => {
         return location.venue.location.postalCode === zipCode
@@ -70,6 +67,33 @@ class App extends Component {
 
       this.setState({filtered_locs: filtered_locs})
     }
+    // console.log(this.state.filtered_locs[0].venue.name);
+    this.updateMarkers(this.state.filtered_locs, this.state.markers, this.state.map);
+  }
+
+  updateMarkers = (filtered_locs, markers, map) => {
+    const filtered_names = filtered_locs.map((loc) => {
+      return loc.venue.name;
+    })
+    // console.log(filtered_names);
+    //Hide all markers
+    this.hideMarkers();
+
+    //show markers with matching names
+    filtered_names.forEach((name) => {
+      markers.forEach((marker) => {
+        if(name === marker.title) {
+          // f_locs.push(marker);
+          marker.setMap(map)
+        };
+      })
+    })
+  }
+
+  hideMarkers = () => {
+    this.state.markers.forEach((marker) => {
+      marker.setMap(null);
+    })
   }
 
   initMap = () => {
@@ -77,6 +101,7 @@ class App extends Component {
         center: {lat:33.716502, lng:-84.38},
         zoom: 12
     });
+    this.setState({map});
 
     let markers = [];
     let zipCodes = [];
@@ -92,7 +117,8 @@ class App extends Component {
       markers.push(marker);
       zipCodes.push(location.venue.location.postalCode);
     })
-
+    console.log(markers)
+    this.setState({markers:markers})
     // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates?answertab=votes#tab-top
     this.setState({
       zipCodes: zipCodes.filter((value, index, self) => {
@@ -100,6 +126,7 @@ class App extends Component {
       })
     })
 
+    //adjust bounds to fit and display all markers
     for(let i = 0; i < markers.length; i++) {
       bounds.extend(markers[i].position);
     }
