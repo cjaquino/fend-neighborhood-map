@@ -23,7 +23,6 @@ class LocationList extends Component {
   onChangeHandler = (e) => {
     this.props.onZipSelect(e.target.value);
     this.setState({zipCode:e.target.value});
-    this.toggleMenuHandler();
   }
 
 
