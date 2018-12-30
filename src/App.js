@@ -154,19 +154,25 @@ class App extends Component {
       });
 
       markers.push(marker);
+
       marker.addListener('click', function(app) {
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
+        markers.map((marker) => {
+          marker.setIcon(defaultIcon);
+        })
         this.setIcon(selectedIcon);
-        this.setAnimation(window.google.maps.Animation.BOUNCE);
       });
 
       let listItem = document.getElementById(location.venue.name);
+
       listItem.addEventListener('click', function() {
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
+        markers.map((marker) => {
+          marker.setIcon(defaultIcon);
+        })
         marker.setIcon(selectedIcon);
-        marker.setAnimation(window.google.maps.Animation.BOUNCE);
       })
 
       zipCodes.push(location.venue.location.postalCode);
