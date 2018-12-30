@@ -60,15 +60,16 @@ class App extends Component {
     })
 
     // filter locations
+    let filtered_locs = this.state.locations.filter((location) => {
+      return location.venue.location.postalCode === zipCode
+    })
     if(zipCode){
-      let filtered_locs = this.state.locations.filter((location) => {
-        return location.venue.location.postalCode === zipCode
-      })
-
+      this.updateMarkers(filtered_locs, this.state.markers, this.state.map);
       this.setState({filtered_locs: filtered_locs})
+    } else {
+      this.showAllMarkers();
     }
     // console.log(this.state.filtered_locs[0].venue.name);
-    this.updateMarkers(this.state.filtered_locs, this.state.markers, this.state.map);
   }
 
   updateMarkers = (filtered_locs, markers, map) => {
@@ -93,6 +94,12 @@ class App extends Component {
   hideMarkers = () => {
     this.state.markers.forEach((marker) => {
       marker.setMap(null);
+    })
+  }
+
+  showAllMarkers = () => {
+    this.state.markers.forEach((marker) => {
+      marker.setMap(this.state.map);
     })
   }
 
