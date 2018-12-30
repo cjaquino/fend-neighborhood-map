@@ -104,6 +104,17 @@ class App extends Component {
     })
   }
 
+  makeMarkerIcon = (color) => {
+    const markerImage = new window.google.maps.MarkerImage(
+      'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ color +
+      '|40|_|%E2%80%A2',
+      new window.google.maps.Size(21, 34),
+      new window.google.maps.Point(0, 0),
+      new window.google.maps.Point(10, 34),
+      new window.google.maps.Size(21,34));
+    return markerImage;
+  }
+
   initMap = () => {
     const map = new window.google.maps.Map(document.getElementById('map'), {
         center: {lat:33.716502, lng:-84.38},
@@ -131,23 +142,31 @@ class App extends Component {
             <p>${location.venue.location.formattedAddress[2]}</p>
         </div>`;
 
+      const defaultIcon = this.makeMarkerIcon('f00');
+      const selectedIcon = this.makeMarkerIcon('00f');
+
       let marker = new window.google.maps.Marker({
         position: location.venue.location,
         map: map,
         title: location.venue.name,
-        animation: window.google.maps.Animation.DROP
+        animation: window.google.maps.Animation.DROP,
+        icon: defaultIcon
       });
 
       markers.push(marker);
       marker.addListener('click', function(app) {
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
+        this.setIcon(selectedIcon);
+        this.setAnimation(window.google.maps.Animation.BOUNCE);
       });
 
       let listItem = document.getElementById(location.venue.name);
       listItem.addEventListener('click', function() {
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
+        marker.setIcon(selectedIcon);
+        marker.setAnimation(window.google.maps.Animation.BOUNCE);
       })
 
       zipCodes.push(location.venue.location.postalCode);
