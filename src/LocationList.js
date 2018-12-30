@@ -3,7 +3,8 @@ import './App.css'
 
 class LocationList extends Component {
   state = {
-    opened: true
+    opened: true,
+    zipCode: ''
   }
 
   toggleMenuHandler = () => {
@@ -19,13 +20,11 @@ class LocationList extends Component {
     }
   }
 
-  onChangeHandler = () => {
-    // console.log(document.getElementById("location-search").value);
-    let value = document.getElementById("location-search").value;
-    this.setState((state) => ({
-      selectedArea: value
-    }))
+  onChangeHandler = (e) => {
+    this.props.onZipSelect(e.target.value);
+    this.setState({zipCode:e.target.value});
   }
+
 
   render() {
     // console.log(this.props);
@@ -33,11 +32,11 @@ class LocationList extends Component {
       <div id='sidebar'>
         <h2>Locations</h2>
         <div id="search-container">
-          <select defaultValue='' id="location-search" onChange={() => this.onChangeHandler()}>
-            <option value=''>Area</option>
-            <option value='midtown'>Midtown</option>
-            <option value='downtown'>Downtown</option>
-            <option value='grant park'>Grant Park</option>
+          <select defaultValue='' id="location-search" onChange={(e) => this.onChangeHandler(e)}>
+            <option value=''>ZIP Codes</option>
+            {this.props.zipCodes.map((zipCode, index) => (
+              <option key={index} value={zipCode}>{zipCode}</option>
+            ))}
           </select>
         </div>
         <ul id="locations-list">

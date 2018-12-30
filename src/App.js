@@ -12,18 +12,21 @@ function loadScript(url) {
   index.parentNode.insertBefore(script, index);
 };
 
-const locations = [
-  {title: 'World of Coca-Cola', area:'downtown', lat:33.7629496, lng:-84.39266959999998}, //Downtown
-  {title: 'Zoo Atlanta', area:'grant park', lat:33.734098, lng:-84.37226799999996}, //Grant Park
-  {title: 'Georgia Aquarium', area:'downtown', lat:33.763382, lng:-84.3951098}, //Downtown
-  {title: 'Piedmont Park', area:'midtown', lat:33.7850856, lng:-84.37380300000001}, //Midtown
-  {title: 'High Museum of Art', area:'midtown', lat:33.7900632, lng:-84.38555199999996} //Midtown
-];
+// const locations = [
+//   {title: 'World of Coca-Cola', area:'downtown', lat:33.7629496, lng:-84.39266959999998}, //Downtown
+//   {title: 'Zoo Atlanta', area:'grant park', lat:33.734098, lng:-84.37226799999996}, //Grant Park
+//   {title: 'Georgia Aquarium', area:'downtown', lat:33.763382, lng:-84.3951098}, //Downtown
+//   {title: 'Piedmont Park', area:'midtown', lat:33.7850856, lng:-84.37380300000001}, //Midtown
+//   {title: 'High Museum of Art', area:'midtown', lat:33.7900632, lng:-84.38555199999996} //Midtown
+// ];
 
 class App extends Component {
   state = {
-    locations: []
+    locations: [],
+    filtered_locs: [],
+    zipCodes: []
   }
+
   componentDidMount() {
     this.getLocations();
   }
@@ -47,15 +50,27 @@ class App extends Component {
     axios.get(endpoint + new URLSearchParams(parameters))
       .then(response => {
         this.setState({
-          locations: response.data.response.groups[0].items
+          locations: response.data.response.groups[0].items,
+          filtered_locs: response.data.response.groups[0].items
         }, this.loadMap())
-        console.log(response);
       })
       .catch(error => {
         console.log("ERROR: " + error)
       })
   }
 
+  onZipSelect = (zipCode) => {
+    this.setState({
+      filtered_locs: this.state.locations
+    })
+    if(zipCode){
+      let filtered_locs = this.state.locations.filter((location) => {
+        return location.venue.location.postalCode === zipCode
+      })
+
+      this.setState({filtered_locs: filtered_locs})
+    }
+  }
 
   initMap = () => {
     const map = new window.google.maps.Map(document.getElementById('map'), {
@@ -64,6 +79,7 @@ class App extends Component {
     });
 
     let markers = [];
+    let zipCodes = [];
     let bounds = new window.google.maps.LatLngBounds();
     console.log(this.state.locations);
     this.state.locations.forEach((location) => {
@@ -74,6 +90,14 @@ class App extends Component {
         animation: window.google.maps.Animation.DROP
       });
       markers.push(marker);
+      zipCodes.push(location.venue.location.postalCode);
+    })
+
+    // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates?answertab=votes#tab-top
+    this.setState({
+      zipCodes: zipCodes.filter((value, index, self) => {
+        return self.indexOf(value) === index
+      })
     })
 
     for(let i = 0; i < markers.length; i++) {
@@ -87,7 +111,7 @@ class App extends Component {
     return (
       <main>
         <div id="map"></div>
-        <LocationList locations={this.state.locations} />
+        <LocationList locations={this.state.filtered_locs} zipCodes={this.state.zipCodes} onZipSelect={this.onZipSelect}/>
       </main>
     );
   }
