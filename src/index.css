@@ -101,6 +101,7 @@ code {
   padding: 0.5rem 0 0.5rem 1rem;
   color: #BBB;
   border-bottom: 1.25px solid #2D2D2D;
+  background-color: #333;
 }
 
 #locations-list li:hover {

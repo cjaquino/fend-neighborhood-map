@@ -155,23 +155,42 @@ class App extends Component {
 
       markers.push(marker);
 
+      let listItem = document.getElementById(location.venue.name);
+      let listItems = [].slice.call(document.getElementById('locations-list').childNodes)
+
       marker.addListener('click', function(app) {
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
+
+        // reset markers' color
         markers.map((marker) => {
           marker.setIcon(defaultIcon);
         })
+
+        //reset list items' color
+        listItems.forEach((li) => {
+          li.style.backgroundColor = "#333";
+        })
+
+        listItem.style.backgroundColor =  "#55D";
         this.setIcon(selectedIcon);
       });
-
-      let listItem = document.getElementById(location.venue.name);
 
       listItem.addEventListener('click', function() {
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
+
+        //reset marker colors
         markers.map((marker) => {
           marker.setIcon(defaultIcon);
         })
+
+        //reset list items' color
+        listItems.forEach((li) => {
+          li.style.backgroundColor = "#333";
+        })
+
+        listItem.style.backgroundColor =  "#55D";
         marker.setIcon(selectedIcon);
       })
 
