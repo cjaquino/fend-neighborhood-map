@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import LocationList from './LocationList';
+import axios from 'axios';
 import './App.css';
 
 function loadScript(url) {
@@ -9,55 +10,62 @@ function loadScript(url) {
   script.async = true;
   script.defer = true;
   index.parentNode.insertBefore(script, index);
-
 }
 
 class App extends Component {
+  state = {
+    locations: [
+      {title: 'World of Coca-Cola', area:'downtown', lat:33.7629496, lng:-84.39266959999998}, //Downtown
+      {title: 'Zoo Atlanta', area:'grant park', lat:33.734098, lng:-84.37226799999996}, //Grant Park
+      {title: 'Georgia Aquarium', area:'downtown', lat:33.763382, lng:-84.3951098}, //Downtown
+      {title: 'Piedmont Park', area:'midtown', lat:33.7850856, lng:-84.37380300000001}, //Midtown
+      {title: 'High Museum of Art', area:'midtown', lat:33.7900632, lng:-84.38555199999996} //Midtown
+    ]
+  }
   componentDidMount() {
     this.loadMap();
   }
 
   loadMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyBnkgMnhHckV_jd9qEFlop5r_B8Ju7ENXE&callback=initMap");
     window.initMap = this.initMap;
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyBnkgMnhHckV_jd9qEFlop5r_B8Ju7ENXE&callback=initMap");
   }
 
   initMap = () => {
     const map = new window.google.maps.Map(document.getElementById('map'), {
-        center: {lat:33.716502, lng:-84.32},
+        center: {lat:33.716502, lng:-84.38},
         zoom: 12
     });
 
-    // Array of places I'm interested in
-    const locations = [
-      {title: 'World of Coke', lat:33.7629496, lng:-84.39266959999998},
-      {title: 'Zoo Atlanta', lat:33.734098, lng:-84.37226799999996},
-      {title: 'Ponce City Market', lat:33.772597, lng:-84.36554130000002},
-      {title: 'Piedmont Park', lat:33.7850856, lng:-84.37380300000001},
-      {title: 'Hartsfield-Jackson International Airport', lat:33.6407282, lng:-84.42770009999998}
-    ];
-
     let markers = [];
+    let bounds = new window.google.maps.LatLngBounds();
 
-    locations.forEach((location) => {
+    this.state.locations.forEach((location) => {
       let marker = new window.google.maps.Marker({
         position: location,
         map: map,
-        title: location.title
+        title: location.title,
+        animation: window.google.maps.Animation.DROP
       });
       markers.push(marker);
     })
-  }
 
+    for(let i = 0; i < markers.length; i++) {
+      bounds.extend(markers[i].position);
+    }
+    map.fitBounds(bounds);
+    // console.log(markers);
+  }
 
   render() {
     return (
       <main>
-        <div id="map">Hello World!</div>
-        <LocationList />
+        <div id="map"></div>
+        <LocationList locations={this.state.locations} />
       </main>
     );
   }
 }
+// <Menu menu_state={this.state.menu_state} toggleMenu={this.toggleMenuState} />
 
 export default App;
