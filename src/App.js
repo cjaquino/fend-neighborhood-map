@@ -40,6 +40,7 @@ class App extends Component {
       client_secret:"QETHWPLLKSLHVP3DFGDFLIHY0B25RAEW1MXW5MZFGPHXVFNN",
       query:"bars",
       ll:"33.7570183,-84.4013661",
+      limit: 10,
       v:"20181229"
     }
 
@@ -113,18 +114,45 @@ class App extends Component {
     let markers = [];
     let zipCodes = [];
     let bounds = new window.google.maps.LatLngBounds();
-    console.log(this.state.locations);
+    // console.log(this.state.locations);
+
+
+    let infoWindow = new window.google.maps.InfoWindow();
+
     this.state.locations.forEach((location) => {
+      // console.log(location);
+      let infoWindowContent =
+        `<div id='info-window'>
+            <h3 id='info-title'>${location.venue.name}</h3>
+            <hr>
+            <p id='info-addr-txt'><strong>Address:</strong></p>
+            <p>${location.venue.location.formattedAddress[0]}</p>
+            <p>${location.venue.location.formattedAddress[1]}</p>
+            <p>${location.venue.location.formattedAddress[2]}</p>
+        </div>`;
+
       let marker = new window.google.maps.Marker({
         position: location.venue.location,
         map: map,
         title: location.venue.name,
         animation: window.google.maps.Animation.DROP
       });
+
       markers.push(marker);
+      marker.addListener('click', function(app) {
+        infoWindow.setContent(infoWindowContent);
+        infoWindow.open(map, marker);
+      });
+
+      let listItem = document.getElementById(location.venue.name);
+      listItem.addEventListener('click', function() {
+        infoWindow.setContent(infoWindowContent);
+        infoWindow.open(map, marker);
+      })
+
       zipCodes.push(location.venue.location.postalCode);
     })
-    console.log(markers)
+
     this.setState({markers:markers})
     // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates?answertab=votes#tab-top
     this.setState({
@@ -145,7 +173,7 @@ class App extends Component {
     return (
       <main>
         <div id="map"></div>
-        <LocationList locations={this.state.filtered_locs} zipCodes={this.state.zipCodes} onZipSelect={this.onZipSelect}/>
+        <LocationList locations={this.state.filtered_locs} zipCodes={this.state.zipCodes} onZipSelect={this.onZipSelect} />
       </main>
     );
   }

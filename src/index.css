@@ -106,3 +106,12 @@ code {
 #locations-list li:hover {
   background-color: #555;
 }
+
+#info-window p {
+  font-size: .7rem;
+  margin: 0;
+}
+
+#info-addr-txt {
+  color: #555;
+}
