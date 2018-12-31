@@ -30,7 +30,10 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
-NOTE: The service worker is only enabled in the production environment. Run this command and launch the app in the build folder to utilize the service worker.
+NOTE: The service worker is only enabled in the production environment. To run the build folder:
+1) Run `npm run build`
+2) Run `npm install -g serve` if not already installed
+3) Run `serve -s build`
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
