@@ -7,11 +7,13 @@ import './App.css';
 function loadScript(url) {
   let index = window.document.querySelector("script");
   let script = window.document.createElement("script");
-  script.src = url
+  script.src = url;
   script.async = true;
   script.defer = true;
+  script.setAttribute("onerror", `alert("ERROR loading ${script.src}")`);
   index.parentNode.insertBefore(script, index);
 };
+
 
 class App extends Component {
   state = {
@@ -76,8 +78,6 @@ class App extends Component {
     } else {
       this.showAllMarkers();
     }
-
-    // console.log(this.state.filtered_locs[0].venue.name);
   }
 
   // display markers on map relative to filtered_locs
@@ -138,10 +138,17 @@ class App extends Component {
   }
 
   initMap = () => {
+
     const map = new window.google.maps.Map(document.getElementById('map'), {
         center: {lat:33.716502, lng:-84.38},
         zoom: 12
     });
+
+    // alert if there's a google maps auth error
+    window.gm_authFailure = () => {
+      alert("ERROR: Google Maps Authentication failure. Check console for details");
+    }
+    
     this.setState({map});
 
     let markers = [];
