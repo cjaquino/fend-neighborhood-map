@@ -222,7 +222,7 @@ class App extends Component {
   render() {
     return (
       <main>
-        <div id="map" aria-labelledby="google_map"></div>
+        <div id="map" aria-labelledby="google_map" role="application"></div>
         <LocationList
           locations={this.state.filtered_locs}
           zipCodes={this.state.zipCodes}

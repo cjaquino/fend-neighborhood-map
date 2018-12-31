@@ -32,7 +32,7 @@ class LocationList extends Component {
 
   render() {
     return (
-      <div id='sidebar' role='menu'>
+      <nav id='sidebar' role='menu'>
         <h2>Locations</h2>
         <div id="search-container" role='search'>
           <select tabIndex="1" defaultValue='' id="location-search" onChange={(e) => this.onChangeHandler(e)}>
@@ -50,7 +50,7 @@ class LocationList extends Component {
         <button tabIndex="3" id="menu" onClick={() => this.toggleMenuHandler()}>
           <div id="icon" className='close'></div>
         </button>
-      </div>
+      </nav>
     )
   }
 }
