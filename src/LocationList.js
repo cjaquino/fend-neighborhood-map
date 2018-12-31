@@ -7,6 +7,8 @@ class LocationList extends Component {
     zipCode: ''
   }
 
+  // toggles the sidbar menu location from onscreen to offscreen,
+  // leaving the open/close button to be always visible
   toggleMenuHandler = () => {
     this.setState((state) => ({
       opened: !this.state.opened
@@ -20,14 +22,15 @@ class LocationList extends Component {
     }
   }
 
+  // handles dropdown onChange event
+  // calls onZipSelect to handle functionality and sets this component's state
+  // to call render function and update list
   onChangeHandler = (e) => {
     this.props.onZipSelect(e.target.value);
     this.setState({zipCode:e.target.value});
   }
 
-
   render() {
-    // console.log(this.props);
     return (
       <div id='sidebar' role='menu'>
         <h2>Locations</h2>
@@ -51,8 +54,5 @@ class LocationList extends Component {
     )
   }
 }
-
-// <input id="location-search" type="text" placeholder="Ex: World of Coke" />
-// <input id="submit-location-search" type="button" value="Go" />
 
 export default LocationList;

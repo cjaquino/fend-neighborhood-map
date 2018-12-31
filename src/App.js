@@ -3,6 +3,7 @@ import LocationList from './LocationList';
 import axios from 'axios';
 import './App.css';
 
+// loads script tag into index.html with provided url
 function loadScript(url) {
   let index = window.document.querySelector("script");
   let script = window.document.createElement("script");
@@ -53,10 +54,12 @@ class App extends Component {
       })
       .catch(err => {
         console.log("ERROR: " + err);
-        alert("ERROR: There was a problem with the FourSquare request")
+        alert("ERROR: There was a problem with the FourSquare request " + err)
       })
   }
 
+  // handles onChange event on the dropdown menu
+  // updates filtered_locs based on zipcode selected
   onZipSelect = (zipCode) => {
     // reset filtered_locs state before filtering
     this.setState({
@@ -77,11 +80,12 @@ class App extends Component {
     // console.log(this.state.filtered_locs[0].venue.name);
   }
 
+  // display markers on map relative to filtered_locs
   updateMarkers = (filtered_locs, markers, map) => {
     const filtered_names = filtered_locs.map((loc) => {
       return loc.venue.name;
     })
-    // console.log(filtered_names);
+
     //Hide all markers
     this.hideMarkers();
 
@@ -96,18 +100,21 @@ class App extends Component {
     })
   }
 
+  // hides all markers
   hideMarkers = () => {
     this.state.markers.forEach((marker) => {
       marker.setMap(null);
     })
   }
 
+  // displays all markers
   showAllMarkers = () => {
     this.state.markers.forEach((marker) => {
       marker.setMap(this.state.map);
     })
   }
 
+  // create a marker icon
   makeMarkerIcon = (color) => {
     const markerImage = new window.google.maps.MarkerImage(
       'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ color +
@@ -119,6 +126,8 @@ class App extends Component {
     return markerImage;
   }
 
+  // handles onClick event of list item in sidebar
+  // trigger a map marker click event when list item click event is triggered
   onListClick = (e) => {
     // Set selected marker color
     const marker = this.state.markers.find((marker) => {
@@ -138,14 +147,11 @@ class App extends Component {
     let markers = [];
     let zipCodes = [];
     let bounds = new window.google.maps.LatLngBounds();
-    // console.log(this.state.locations);
-
     let infoWindow = new window.google.maps.InfoWindow();
 
     this.state.locations.forEach((location) => {
-      // console.log(location);
       let infoWindowContent =
-        `<div id='info-window'>
+        `<div id='info-window' aria-labelledby='infowindow'>
             <h3 id='info-title'>${location.venue.name}</h3>
             <hr>
             <p id='info-addr-txt'><strong>Address:</strong></p>
@@ -173,11 +179,12 @@ class App extends Component {
         let listItem = document.getElementById(location.venue.name);
         let listItems = [].slice.call(document.getElementById('locations-list').childNodes)
 
+        // display infoWindow with proper content
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(map, marker);
 
         // reset markers' color
-        markers.map((marker) => {
+        markers.forEach((marker) => {
           marker.setIcon(defaultIcon);
         })
 
@@ -186,14 +193,18 @@ class App extends Component {
           li.style.backgroundColor = "#333";
         })
 
+        // set listItem backgroundColor
         listItem.style.backgroundColor =  "#55D";
         this.setIcon(selectedIcon);
       });
 
+      // create zipcode array to filter out later for unique zipcodes present
       zipCodes.push(location.venue.location.postalCode);
     })
 
     this.setState({markers:markers})
+
+    // get distinct zipcodes from zipcodes array
     // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates?answertab=votes#tab-top
     this.setState({
       zipCodes: zipCodes.filter((value, index, self) => {
@@ -206,13 +217,12 @@ class App extends Component {
       bounds.extend(markers[i].position);
     }
     map.fitBounds(bounds);
-    // console.log(markers);
   }
 
   render() {
     return (
       <main>
-        <div id="map"></div>
+        <div id="map" aria-labelledby="google_map"></div>
         <LocationList
           locations={this.state.filtered_locs}
           zipCodes={this.state.zipCodes}
@@ -223,6 +233,5 @@ class App extends Component {
     );
   }
 }
-// <Menu menu_state={this.state.menu_state} toggleMenu={this.toggleMenuState} />
 
 export default App;
